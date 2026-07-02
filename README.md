@@ -58,21 +58,20 @@ pip install loomc
 
 ## What it looks like
 
-Resume is a first-class workflow — not just crash recovery. Start a loop, inspect it, decide to continue:
+Your loop crashed. Check what happened, resume from where it stopped:
 
 ```text
 $ loomc runs
 
-ID             STATUS              STEPS      COST  CREATED
-------------------------------------------------------------------------
-a1b2c3d4e5f6   failed                  3   $0.1500  2026-07-02T12:00:19
+ID             STATUS    STEPS      COST  CREATED
+--------------------------------------------------------------------
+a1b2c3d4e5f6   failed        3   $0.1500  2026-07-03T12:00:19
 ```
 
 ```text
 $ loomc show a1b2c3d4e5f6
 
-Run: a1b2c3d4e5f6  Status: failed — crashed at step 3, $1.85 of $2.00 remaining
-
+Run: a1b2c3d4e5f6  Status: failed
 STEP      COST     CUMUL    SCORE  ERROR
 --------------------------------------------------------
    0   $0.0500   $0.0500   0.2500
@@ -82,39 +81,25 @@ STEP      COST     CUMUL    SCORE  ERROR
 ```
 
 ```python
-result = refine_report.resume("a1b2c3d4e5f6")  # continues from step 3
+result = refine_report.resume("a1b2c3d4e5f6")  # picks up from step 3, $1.85 still in budget
 ```
 
----
-
-**`loomc runs`** — all runs in the local checkpoint DB:
+A completed run with backtracking:
 
 ```text
-ID             STATUS              STEPS      COST  CREATED
-------------------------------------------------------------------------
-a1b2c3d4e5f6   completed               7   $0.3500  2026-07-02T12:00:19
-9f8e7d6c5b4a   budget_exhausted       10   $1.0012  2026-07-02T11:47:03
-3c2b1a0f9e8d   stalled                 4   $0.1600  2026-07-02T11:31:44
-```
+$ loomc show b2c3d4e5f6a1
 
-**`loomc show a1b2c3d4e5f6`** — step-by-step cost and score:
-
-```text
-Run: a1b2c3d4e5f6  Status: completed
-Created: 2026-07-02T12:00:00+00:00
-
+Run: b2c3d4e5f6a1  Status: completed
 STEP      COST     CUMUL    SCORE  ERROR
 --------------------------------------------------------
    0   $0.0500   $0.0500   0.2500
    1   $0.0500   $0.1000   0.5000
    2   $0.0500   $0.1500   0.7500
-   3   $0.0500   $0.2000   0.7400  <- backtrack triggered
+   3   $0.0500   $0.2000   0.7400  <- backtrack to step 2
    4   $0.0500   $0.2500   0.8100
    5   $0.0500   $0.3000   0.9200
    6   $0.0500   $0.3500   1.0000  <- converged
 ```
-
-**`loomc export a1b2c3d4e5f6 --json`** — full run as JSON for analysis.
 
 ---
 
@@ -148,23 +133,6 @@ def fix_code(state: State) -> State:
 
 result = fix_code(State(code=BUGGY_CODE))
 ```
-
-### Resume a crashed run
-
-```bash
-$ loomc resume a1b2c3d4e5f6
-Run a1b2c3d4e5f6 — failed, 3 steps
-
-To resume programmatically:
-
-    result = fix_code.resume("a1b2c3d4e5f6")
-```
-
-```python
-result = fix_code.resume("a1b2c3d4e5f6")
-```
-
-The loop picks up from the last checkpoint. Budget accounting continues from where it left off.
 
 ---
 

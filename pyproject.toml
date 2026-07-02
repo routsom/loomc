@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "loomc"
-version = "0.1.0"
+version = "0.1.1"
 description = "Declarative loop specs compiled into resilient agent execution"
 readme = "README.md"
 license = { text = "MIT" }
@@ -12,7 +12,7 @@ requires-python = ">=3.10"
 authors = [{ name = "routsom" }]
 keywords = ["agents", "llm", "loop", "budget", "checkpointing", "ai"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
