@@ -142,7 +142,10 @@ result = fix_code(State(code=BUGGY_CODE))
 - **Resume anywhere** — `my_fn.resume("run_id")` continues from the last successful step. Budget accounting carries over.
 - **Hard budget caps** — USD, iteration count, wall clock. Enforced *before* each call — the loop never starts a step it can't afford.
 - **Full step history** — `loomc show <id>` gives you cost, score, and error for every iteration. Know exactly why a loop stopped.
-- **Convergence detection** — `score_plateau`, `predicate`, `semantic_delta` *(M2)*
+- **Convergence detection** — `score_plateau`, `predicate`, `semantic_delta`, `judge` (LLM-as-judge)
+- **Cost adapters** — `AnthropicAdapter` and `OpenAIAdapter` extract token costs from responses automatically
+- **Async support** — decorate `async def` iteration functions natively; `AsyncLoopRunner` handles the event loop
+- **Nested loops** — child loops propagate costs to the parent ledger via `contextvars`; parent budget sees total spend
 - **Backtracking** — `BestScore` restores the highest-scoring checkpoint on regression. `LastGood` restores on error.
 - **Stall detection** — `Escalate(after=3)` raises `StallError` when no progress for N steps. Catch it to swap models, escalate to human, or abort cleanly.
 - **LLM agnostic** — loomc never calls an LLM. It wraps your code. Bring any model, any SDK.
@@ -168,7 +171,8 @@ Budgets are enforced **before** each iteration — the loop never starts a call 
 | Detector | Behaviour |
 | --- | --- |
 | `score_plateau(patience=3, min_delta=0.01)` | Stops when score hasn't improved by `min_delta` for `patience` consecutive steps |
-| `semantic_delta(threshold=0.05)` | *(M2)* Stops when embedding distance between consecutive outputs drops below threshold |
+| `semantic_delta(threshold=0.05)` | Stops when embedding distance between consecutive outputs drops below threshold |
+| `judge(judge_fn)` | Calls `judge_fn(state) -> bool` — wire in an LLM-as-judge via `AnthropicAdapter.judge()` or `OpenAIAdapter.judge()` |
 | `predicate(fn)` | Wraps any `fn(history) -> bool` |
 
 ---
@@ -230,11 +234,17 @@ pytest tests/ -v
 
 ---
 
-## Roadmap
+## What's shipped
 
-- **M1 (shipped)** — decorator, USD/iteration/wall-clock budgets, SQLite checkpointing, resume, `score_plateau`, `BestScore`, `LastGood`, `Escalate`, CLI
-- **M2** — `semantic_delta` convergence, `judge` (LLM-as-judge), Anthropic/OpenAI cost adapters
-- **M3** — nested loops with budget ledger, async support
+All three milestones are complete as of v0.2.0.
+
+| Milestone | What shipped |
+| --- | --- |
+| **M1** | `@loop` decorator, USD/iteration/wall-clock budgets, SQLite checkpointing, resume, `score_plateau`, `BestScore`, `LastGood`, `Escalate`, CLI |
+| **M2** | `semantic_delta` (sentence-transformers), `judge` (LLM-as-judge), `AnthropicAdapter`, `OpenAIAdapter` |
+| **M3** | Async support (`AsyncLoopRunner`), nested loop budget propagation via `contextvars` |
+
+**What's next** — custom checkpoint backends (Postgres, S3), streaming step callbacks, a web UI for `loomc runs`, and first-class multi-agent orchestration where each agent is a `@loop`.
 
 ---
 
