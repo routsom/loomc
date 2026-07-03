@@ -1,13 +1,26 @@
-# loomc
+<div align="center">
 
-> Your $4 refinement loop crashed at step 9 of 10. You have no idea what happened. You start again from scratch.
+```
+ ██╗      ██████╗  ██████╗ ███╗   ███╗ ██████╗
+ ██║     ██╔═══██╗██╔═══██╗████╗ ████║██╔════╝
+ ██║     ██║   ██║██║   ██║██╔████╔██║██║
+ ██║     ██║   ██║██║   ██║██║╚██╔╝██║██║
+ ███████╗╚██████╔╝╚██████╔╝██║ ╚═╝ ██║╚██████╗
+ ╚══════╝ ╚═════╝  ╚═════╝ ╚═╝     ╚═╝ ╚═════╝
+```
 
-**loomc** is a Python decorator that turns a single-iteration function into a resilient agent loop — with hard budget caps, SQLite checkpointing after every step, and full resume from wherever it stopped.
+**Declarative loop specs compiled into resilient agent execution**
 
 [![CI](https://github.com/routsom/loomc/actions/workflows/ci.yml/badge.svg)](https://github.com/routsom/loomc/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/loomc)](https://pypi.org/project/loomc/)
 [![Python](https://img.shields.io/pypi/pyversions/loomc)](https://pypi.org/project/loomc/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+</div>
+
+> Your $4 refinement loop crashed at step 9 of 10. You have no idea what happened. You start again from scratch.
+
+**loomc** is a Python decorator that turns a single-iteration function into a resilient agent loop — with hard budget caps, SQLite checkpointing after every step, and full resume from wherever it stopped.
 
 ---
 
